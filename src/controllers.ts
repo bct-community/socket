@@ -1,7 +1,8 @@
-import { env } from "@/config";
-import { io } from "@/server";
-import { openAICompletion } from "@/openAICompletion";
 import { ChatCompletionMessageParam } from "openai/resources";
+
+import { env } from "./config";
+import { io } from "./server";
+import { openAICompletion } from "./openAICompletion";
 
 export const MessageController = async ({
   id,

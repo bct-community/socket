@@ -1,6 +1,7 @@
-import { env } from "@/config";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
+
+import { env } from "./config";
 
 const client = new OpenAI();
 
