@@ -4,7 +4,7 @@ import http from "http";
 import { Server, Socket } from "socket.io";
 
 import { env } from "./config";
-import { MessageController } from "./controllers";
+import { MessageController, RaidMessageController } from "./controllers";
 import { RateLimiterMemory, RateLimiterRes } from "rate-limiter-flexible";
 import { formatMsToTime } from "./utils";
 
@@ -27,11 +27,43 @@ export const io = new Server(server, {
   cors: { origin: corsOptions.origin },
 });
 
+export type Raid = {
+  platform: string;
+  shareMessage: string;
+};
+
 io.on("connection", (socket: Socket) => {
   socket.on("message", async (message: string) => {
     try {
       await rateLimiter.consume(socket.handshake.address);
       MessageController({ id: socket.id, message });
+    } catch (error) {
+      const rejRes = error as RateLimiterRes;
+
+      const message = `Você atingiu o limite de mensagens. Tente novamente em ${formatMsToTime(
+        { ms: rejRes.msBeforeNext }
+      )}.`;
+
+      const blockDate = new Date();
+
+      const unblockDate = new Date(blockDate.getTime() + rejRes.msBeforeNext);
+
+      const unblockDateFormatted = unblockDate.toLocaleString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+      });
+
+      socket.emit("blocked", {
+        message,
+        unblockDateFormatted,
+        unblockDate,
+      });
+    }
+  });
+
+  socket.on("raid-message", async (raid: Raid) => {
+    try {
+      await rateLimiter.consume(socket.handshake.address);
+      RaidMessageController({ id: socket.id, raid });
     } catch (error) {
       const rejRes = error as RateLimiterRes;
 

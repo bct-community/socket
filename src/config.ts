@@ -6,7 +6,6 @@ const envSchema = z.object({
   IS_DEV_MODE: z.string().nonempty(),
   OPENAI_API_KEY: z.string().nonempty(),
   OPENAI_MODEL: z.string().nonempty(),
-  OPENAI_SYSTEM_MESSAGE: z.string().nonempty(),
 });
 
 export const env = envSchema.parse(process.env);
