@@ -85,7 +85,7 @@ io.on("connection", (socket: Socket) => {
         timeZone: "America/Sao_Paulo",
       });
 
-      socket.emit("blocked", {
+      socket.emit("raid-blocked", {
         message,
         unblockDateFormatted,
         unblockDate,
