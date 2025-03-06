@@ -14,6 +14,12 @@ const rateLimiter = new RateLimiterMemory({
   duration: 12 * 60 * 60,
 });
 
+// Limita cada IP a 1 mensagem a cada 18 horas
+const raidMessageLimiter = new RateLimiterMemory({
+  points: 1,
+  duration: 18 * 60 * 60,
+});
+
 const app = express();
 const server = http.createServer(app);
 
@@ -62,7 +68,7 @@ io.on("connection", (socket: Socket) => {
 
   socket.on("raid-message", async (raid: Raid) => {
     try {
-      await rateLimiter.consume(socket.handshake.address);
+      await raidMessageLimiter.consume(socket.handshake.address);
       RaidMessageController({ id: socket.id, raid });
     } catch (error) {
       const rejRes = error as RateLimiterRes;
