@@ -73,10 +73,6 @@ io.on("connection", (socket: Socket) => {
     } catch (error) {
       const rejRes = error as RateLimiterRes;
 
-      const message = `Você atingiu o limite de mensagens. Tente novamente em ${formatMsToTime(
-        { ms: rejRes.msBeforeNext }
-      )}.`;
-
       const blockDate = new Date();
 
       const unblockDate = new Date(blockDate.getTime() + rejRes.msBeforeNext);
@@ -86,7 +82,6 @@ io.on("connection", (socket: Socket) => {
       });
 
       socket.emit("raid-blocked", {
-        message,
         unblockDateFormatted,
         unblockDate,
       });
