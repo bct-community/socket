@@ -54,5 +54,5 @@ export const RaidMessageController = async ({
 
   const chatText = await openAICompletion({ messages });
 
-  io.to(id).emit("bot-message", chatText);
+  io.to(id).emit("bot-raid-message", chatText);
 };
